@@ -240,7 +240,7 @@ def display_menu():
 
 
 
-### 2.2 Conditionals: Making Decisions in Your Code
+### 2.2 Conditionals: Making Decisions in Your Code (date: 12/07/2025)
 
 Conditionals are fundamental programming constructs that allow your program to make decisions and execute different blocks of code based on whether certain conditions are true or false. The primary conditional statements in Python are `if`, `elif` (else if), and `else`.
 
@@ -360,6 +360,43 @@ else:
 
     ```python
     # Your code here
+    def display_menu():
+        print("\n--- Note-Taking Application Menu ---")
+        print("1. Add Note")
+        print("2. View Notes")
+        print("3. Edit Note")
+        print("4. Delete Note")
+        print("5. Save Notes")
+        print("6. Load Notes")
+        print("7. Exit")
+        print("------------------------------------")
+
+    def get_user_choice():
+        display_menu()
+        choice = input("Enter your choice (1-7): ")
+        return choice
+
+    # Main application loop (simplified for now)
+    # We'll use a 'while' loop later, but for now, let's see conditionals in action.
+
+    user_input = get_user_choice()
+
+    if user_input == '1':
+        print("You chose to Add Note.")
+    elif user_input == '2':
+        print("You chose to View Notes.")
+    elif user_input == '3':
+        print("You chose to Edit Note.")
+    elif user_input == '4':
+        print("You chose to Delete Note.")
+    elif user_input == '5':
+        print("You chose to Save Notes.")
+    elif user_input == '6':
+        print("You chose to Load Notes.")
+    elif user_input == '7':
+        print("Exiting application. Goodbye!")
+    else:
+        print("Invalid choice. Please enter a number between 1 and 7.")
     ```
 
 2.  **Input Validation:**
@@ -367,6 +404,27 @@ else:
 
     ```python
     # Your code here
+    def get_user_choice():
+    display_menu()
+    choice = input("Enter your choice (1-7): ")
+    if isinstance(input, int) and not isinstance(input, bool):　# input() always returns str.
+        print("Please input numbers")
+    elif 1 <= input and input >= 7:
+        print("Please input the range 1-7")
+    return choice
+
+    # Correct answer
+    def get_user_choice():
+    display_menu()
+    choice = input("Enter your choice (1-7): ")
+    if not choice.isdigit(): # もしintかどうかを判定する場合はisinstanceが推奨, typeは継承関係が無視されるため非推奨
+        print("Invalid input. Please enter a number.")
+        return None
+    choice = int(choice)
+    elif choice < 1 or choice > 7:
+        print("Please enter a number between 1 and 7.")
+        return None
+    return str(choice)
     ```
 
 3.  **Combine Conditions:**
@@ -374,6 +432,17 @@ else:
 
     ```python
     # Your code here
+    age = input("Enter your age")
+    student_id = input("Do you have a student ID? (yes/no): ")
+
+    if age.isdigit():
+        age = int(age)
+        if 12 <= age <= 25 and student_id:
+            print("Avaiable discount!")
+        else:
+            print("Sorry, you don't qualify for a student discount.")
+    else:
+        print("Invalid age input")
     ```
 
 
@@ -536,6 +605,21 @@ This common Python idiom checks if the script is being run directly (as the main
     # Hint: You'll need to define a list outside the functions, perhaps globally for now, or pass it around.
     # For simplicity, let's use a global list for now, but we'll improve this with OOP later.
     # notes = [] # Define this at the top level of your script
+    notes = []
+
+    def add_note():
+        note = input("Write your content.")
+        notes.append(note) # ミュータブルなのでglobal不要
+    
+    def view_notes():
+        for note in notes: # Need to print each index
+            print(note)
+    
+    # correct answer
+     def view_notes():
+        for idx, note in enumerate(notes, start=1):
+            print(f"{idx}, {note}")   
+
     ```
 
 2.  **Limited Attempts:**
@@ -543,6 +627,32 @@ This common Python idiom checks if the script is being run directly (as the main
 
     ```python
     # Your code here
+    def get_user_choice():
+        attempts = 0
+        while True: # Loop until valid input is received
+            display_menu()
+            choice = input("Enter your choice (1-7): ")
+            if choice.isdigit() and 1 <= int(choice) <= 7:
+                return choice
+            else:
+                print("Invalid choice. Please enter a number between 1 and 7.")
+                attempts++
+                if attempts == 3:
+                    exit # exit is function
+
+    # correct answer
+    def get_user_choice():
+        attempts = 0
+        while attempts < 3:
+            display_menu()
+            choice = input("Enter your choice (1-7): ")
+            if choice.isdigit() and 1 <= int(choice) <= 7:
+                return choice
+            else:
+                print("Invalid choice. Please enter a number between 1 and 7.")
+                attempts += 1
+        exit()
+
     ```
 
 3.  **Countdown Timer:**
@@ -550,6 +660,9 @@ This common Python idiom checks if the script is being run directly (as the main
 
     ```python
     # Your code here
+    for i in range(10, 0, -1):
+        print(i)
+    print(f"Lift off!")
     ```
 
 
@@ -663,8 +776,11 @@ set2 = {3, 4, 5, 6}
 
 print(f"Union: {set1.union(set2)}") # All unique elements from both sets
 print(f"Intersection: {set1.intersection(set2)}") # Common elements
+# Intersection: {3, 4}
 print(f"Difference (set1 - set2): {set1.difference(set2)}") # Elements in set1 but not set2
+# Difference (set1 - set2): {1, 2}
 print(f"Symmetric Difference: {set1.symmetric_difference(set2)}") # Elements in either set, but not both
+# Symmetric Difference: {1, 2, 5, 6}
 ```
 
 Sets are useful for membership testing and eliminating duplicate entries.
@@ -837,6 +953,29 @@ if __name__ == "__main__":
     # Hint: You'll need to import the 'datetime' module for timestamps.
     # import datetime
     # current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    import datetime
+    notes = []
+    def add_note():
+        note_title = input("Enter title: ")
+        note_content = input("Enter your note: ")
+        note = {
+            "title": note_title,
+            "content": note_content,
+            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        notes.append(note)
+        print("Note added successfully!")
+
+    def view_notes():
+        if not notes:
+            print("No notes to display.")
+            return
+        print("\n--- Your Notes ---")
+        for i, note in enumerate(notes):
+            print(i + 1)
+            print(f"title: {note["title"]}")
+            print(f"content: {note["content"][:50]}…")
+        print("------------------")
     ```
 
 2.  **Search Functionality:**
@@ -844,6 +983,23 @@ if __name__ == "__main__":
 
     ```python
     # Your code here
+    import re
+    
+    def search_notes():
+        search_term = input("Enter searching term: ")
+        matches = []
+        for note in notes:
+            if (re.search(search_term, note["title"], re.IGNORECASE) or
+                re.search(search_term, note["content"], re.IGNORECASE)):
+                matches.append(note)
+
+        if not matches:
+            print("No matching notes found")
+        else:
+            for i, note in enumerate(matches, start=1): # startは省いて出力時にi+1としても良い
+                print(f"{i}. {note['title']} ({note['timestamp']})")
+                print(f"{note['content'][:50]}…")
+
     ```
 
 3.  **Unique Tags (Challenge):**
@@ -851,6 +1007,35 @@ if __name__ == "__main__":
 
     ```python
     # Your code here
+    import datetime
+    notes = []
+    def add_note():
+        note_title = input("Enter title: ")
+        note_tags_line = input("Enter tags: ")
+        tag_set = set(tag.strip() for tag in note_tags_line.split(",") if tag.strip())
+        note_content = input("Enter your note: ")
+
+        note = {
+            "title": note_title,
+            "tags": list(tag_set),
+            "content": note_content,
+            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        notes.append(note)
+        print("Note added successfully!")
+    
+    def view_notes():
+        if not notes:
+            print("No notes to display.")
+            return
+        print("\n--- Your Notes ---")
+        for i, note in enumerate(notes):
+            print(i + 1)
+            print(f"title: {note["title"]}")
+            print(f"tags: {', '.join(note['tags'])}")
+            print(f"content: {note["content"]}")
+        print("------------------")
+
     ```
 
 
