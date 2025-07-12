@@ -60,7 +60,7 @@ cd python_note_app
 Now, create a virtual environment named `venv` (you can choose any name):
 
 ```bash
-python3 -m venv venv
+python3 -m venv venv #can change the last argument "venv"
 ```
 
 ### Step 3: Activate the Virtual Environment
@@ -71,6 +71,7 @@ After creating the virtual environment, you need to activate it. The activation 
 
 ```bash
 source venv/bin/activate
+deactivate # To deactivate
 ```
 
 **On Windows (Command Prompt):**
@@ -195,13 +196,17 @@ def display_menu():
 # We'll call this function later in our main application loop.
 ```
 
-#### Exercise 2.1: Functions
+#### Exercise 2.1: Functions (Done: 10, Jul, 2025)
 
 1.  **Create a `get_user_choice()` function:**
     Write a function that displays the menu (by calling `display_menu()`) and then prompts the user to enter their choice. This function should return the user's input.
 
     ```python
     # Your code here
+    def get_user_choice():
+        display_menu()
+        choice = input("Enter your choice: ")
+        return choice
     ```
 
 2.  **Create an `add_note_placeholder()` function:**
@@ -209,6 +214,8 @@ def display_menu():
 
     ```python
     # Your code here
+    def add_note_placeholder(note_content):
+        print(f"Adding note: {note_content}")
     ```
 
 3.  **Modify `display_menu()`:**
@@ -216,6 +223,17 @@ def display_menu():
 
     ```python
     # Your code here
+    def display_menu():
+    print("\n--- Note-Taking Application Menu ---")
+    print("1. Add Note")
+    print("2. View Notes")
+    print("3. Edit Note")
+    print("4. Delete Note")
+    print("5. Save Notes")
+    print("6. Load Notes")
+    print("7. Exit")
+    print("8. Search Notes")
+    print("------------------------------------")
     ```
 
 
