@@ -1278,13 +1278,32 @@ if __name__ == "__main__":
     # Hint: You might need the 'os' module for file operations like renaming.
     # import os
     # os.rename("old_name.txt", "new_name.txt")
+    import os
+
+    def save_notes():
+        if os.path.exists(NOTE_FILE):
+            os.rename(NOTE_FILE, "notes_backup.json")
+        with open(NOTE_FILE, "w") as f:
+            json.dump(notes, f, indent=4)
+        print(f"Notes saved to {NOTE_FILE}")
     ```
 
 3.  **CSV Export (Challenge):**
     Add a new menu option (e.g., "8. Export to CSV"). Implement a function that exports all notes to a CSV (Comma Separated Values) file. Each note's title, content, and timestamp should be columns in the CSV. (Hint: You can use Python's built-in `csv` module).
 
     ```python
-    # import csv
+    import csv
+    # import pandas 使わない
+
+    def export_to_csv():
+        if not notes:
+            print("No notes to export")
+            return
+        with open("note.csv", "w", newline='', encording='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=["tite", "content", "timestamp"])
+            writer.weiterheader()
+            writer.writerrows(notes)
+        print("Notes exported to notes.csv")
     ```
 
 
