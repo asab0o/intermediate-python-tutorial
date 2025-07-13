@@ -1289,7 +1289,7 @@ if __name__ == "__main__":
     ```
 
 3.  **CSV Export (Challenge):**
-    Add a new menu option (e.g., "8. Export to CSV"). Implement a function that exports all notes to a CSV (Comma Separated Values) file. Each note's title, content, and timestamp should be columns in the CSV. (Hint: You can use Python's built-in `csv` module).
+    Add a new menu option (e.g., "8. Export to CSV"). Implement a function that exports all notes to a CSV (Comma Separated Values) file. Each note's title, content, and timestamp should be columns in the CSV. (Hint: You can use Python's built-in [csv](https://docs.python.org/3.13/library/csv.html#csv.DictWriter) module).
 
     ```python
     import csv
@@ -1456,13 +1456,56 @@ def load_notes():
 
 This `load_notes` function is now quite robust. It handles the case where the file doesn't exist, where the file exists but isn't valid JSON, and any other unforeseen errors during the loading process.
 
-#### Exercise 3.2: Error Handling
+#### Exercise 3.2: Error Handling (date: 13/07/2025)
 
 1.  **Robust User Input for Note Index:**
     In `edit_note()` and `delete_note()`, the `while True` loop with `try-except` is good. However, if the user continuously enters invalid input, it will loop forever. Modify these functions to give the user a limited number of attempts (e.g., 3 attempts) to enter a valid note index. If they fail after these attempts, return to the main menu.
 
     ```python
     # Your code here
+    MAX_ATTEMPTS = 3
+
+    def edit_note():
+        view_notes()
+        if not notes:
+            return
+        attempt = 0
+        while attempt < MAX_ATTEMPTS:
+            try:
+                note_index = int(input("Enter the number of the note to edit: ")) - 1
+                if 0 <= note_index < len(notes):
+                    new_title = input(f"Enter new title for note {note_index + 1} (current: \'{notes[note_index]["title"]}\'): ")
+                    new_content = input(f"Enter new content for note {note_index + 1} (current: \'{notes[note_index]["content"]}\'): ")
+                    notes[note_index]["title"] = new_title
+                    notes[note_index]["content"] = new_content
+                    notes[note_index]["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    print("Note updated successfully!")
+                    return
+                else:
+                    print("Invalid note number.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+            attempt += 1
+        print("Return to the main menu.")
+
+    def delete_note():
+        view_notes()
+        if not notes:
+            return
+        attempt = 0
+        while attempt < MAX_ATTEMPTS:
+            try:
+                note_index = int(input("Enter the number of the note to delete: ")) - 1
+                if 0 <= note_index < len(notes):
+                    deleted_note = notes.pop(note_index)
+                    print(f"Note \'{deleted_note["title"]}\' deleted successfully!")
+                    return
+                else:
+                    print("Invalid note number.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+            attemtp += 1
+        print("Return to the main menu.")
     ```
 
 2.  **Handle Empty Note Content:**
@@ -1470,14 +1513,82 @@ This `load_notes` function is now quite robust. It handles the case where the fi
 
     ```python
     # Your code here
+    def add_note():
+        while True:
+            title = input("Enter note title: ").strip()
+            content = input("Enter note content: ").strip()
+            if not title:
+                print("Title cannot be empty.")
+                continue
+            if not content:
+                print("Content cannot be empty.")
+                continue
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            note = {"title": title, "content": content, "timestamp": timestamp}
+            notes.append(note)
+            print("Note added successfully!")
+            break
     ```
 
 3.  **Custom Exception (Challenge):**
     Define a custom exception class, e.g., `InvalidNoteError`. Modify `add_note()` to raise this exception if the note title or content is too short (e.g., less than 3 characters). Then, in `main()`, catch this custom exception and print a user-friendly message.
 
     ```python
-    # class InvalidNoteError(Exception):
-    #     pass
+    class InvalidNoteError(Exception):
+        pass
+
+    MIN_COUNT = 3
+    def add_note():
+        while True:
+            title = input("Enter note title: ").strip()
+            content = input("Enter note content: ").strip()
+
+            # 空だった場合は再入力
+            if not title:
+                print("Title cannot be empty.")
+                continue
+            if not content:
+                print("Content cannot be empty.")
+                continue
+            
+            # 長さチェック
+            if len(title) < MIN_COUNT:
+                raise InvalidNoteError(f"Title has at least {MIN_COUNT} characters")
+            if len(content) < MIN_COUNT:
+                raise InvalidNoteError(f"Content has at least {MIN_COUNT} characters")
+
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            note = {"title": title, "content": content, "timestamp": timestamp}
+            notes.append(note)
+            print("Note added successfully!")
+            break
+
+    def main():
+    load_notes() # Load notes when the application starts
+    while True:
+        choice = get_user_choice()
+
+        try:
+            if choice == '1':
+                add_note()
+            elif choice == '2':
+                view_notes()
+            elif choice == '3':
+                edit_note()
+            elif choice == '4':
+                delete_note()
+            elif choice == '5':
+                save_notes()
+            elif choice == '6':
+                load_notes()
+            elif choice == '7':
+                print("Exiting application. Goodbye!")
+                save_notes() # Save notes before exiting
+                break
+            elif choice == '8':
+                export_to_csv()
+        except InvalidNoteError as e:
+            print(f"Validation Error: {e}")
     ```
 
 
