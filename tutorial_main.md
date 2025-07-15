@@ -1595,7 +1595,7 @@ This `load_notes` function is now quite robust. It handles the case where the fi
 
 
 
-## Section 4: Object-Oriented Programming (OOP) - Structuring the Application
+## Section 4: Object-Oriented Programming (OOP) - Structuring the Application (date: 14/07/2025)
 
 As our application grows, managing it with functions and global variables (like our `notes` list) becomes cumbersome and less organized. This is where **Object-Oriented Programming (OOP)** comes in. OOP is a programming paradigm that revolves around the concept of "objects." It provides a way to structure your code so that it is more modular, reusable, and easier to understand and maintain.
 
@@ -1827,6 +1827,21 @@ print("This is back to normal.")
 
     ```python
     # Your code here
+    from colorama import Fore, Style
+    # example
+    def add_note(self, title, content):
+    # 空だった場合は再入力
+    if not title.strip() or not content.strip():
+        print(Fore.RED + "Title and content cannot be empty.")
+        print(Style.RESET_ALL) # For reset
+        return False
+
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    note = Note(title, content, timestamp)
+    self.notes.append(note)
+    print(Fore.GREEN + f"Note added successfully!")
+    print(Style.RESET_ALL)
+    return True
     ```
 
 2.  **Add `uuid` for Unique IDs (Challenge):**
@@ -1835,6 +1850,15 @@ print("This is back to normal.")
     ```python
     # import uuid
     # self.id = str(uuid.uuid4())
+    class Note:
+    def __init__(self, title, content, timestamp=None, id=None,):
+        self.id = id if id is not None else str(uuid.uuid4())
+        self.title = title
+        self.content = content
+        if timestamp is None:
+            self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            self.timestamp = timestamp
     ```
 
 
