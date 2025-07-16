@@ -13,8 +13,8 @@ class Note:
         self.content = content
         self.timestamp = timestamp if timestamp is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    #def __str__(self):
-    #    return f"Title: {self.title}\nContent: {self.content}\nTimestamp: {self.timestamp}"
+    def __str__(self):
+        return f"Title: {self.title}\nContent: {self.content}\nTimestamp: {self.timestamp}"
 
     def to_dict(self):
         return {
@@ -108,7 +108,44 @@ class NoteManager:
         else:
             print("Does not exist.")
             return False
+    
+    def delete_note(self, index):
+        if 0 <= index < len(self.notes):
+            while True:
+                confirm = input(f"Are you sure you want to delete this note (title: {self.notes[index].title})? (y/n): ")
+                if confirm == "y":
+                    deleted_note = self.notes.pop(index)
+                    print(f"Note deleted successfully!")
+                    break
+                elif confirm == "n":
+                    print("Cancel to delete.")
+                    break
+                else:
+                    print("Please enter (y/n): ")
+                    continue
+        else:
+            print("Does not exist.")
+            return False
+
+    def search_note(self, term):
+        # いったん両方小文字に変換して検索
+        lower_term = term.lower()
+        result_notes = []
+        for note in self.notes:
+            if lower_term in note.title.lower() or lower_term in note.content.lower():
+                result_notes.append(note)
         
+        if len(result_notes) > 0:
+            print("\n--- Results ---")
+            for i, note in enumerate(result_notes):
+                print(f"{i + 1}. Title: {note.title}")
+                print(f"   Content: {note.content[:10]}...")
+            print("------------------")
+            return True
+        else:
+            print("Doesn't hit.")
+            return True
+
     def save_notes(self):
         try:
             with open(self.filename, "w") as f:
@@ -176,21 +213,28 @@ def main():
                         print("Invalid input. Please enter a number or press Enter.")
         elif choice == '3':
             note_manager.view_note()
-            # enter id
             if note_manager.notes:
                 try:
                     edit_choice = int(input("Enter note number to edit: "))
                     if not edit_choice:
                         break
-                    note_index = int(edit_choice) - 1
+                    note_index = edit_choice - 1
                     new_title = input("Enter new title: ").strip()
                     new_content = input("Enter new content: ").strip()
                     note_manager.edit_note(note_index, new_title, new_content)
                 except ValueError:
                     print("Invalid input. Please enter a number or press Enter.")
         elif choice == '4':
-            note_manager.delete_note(note_number)
+            note_manager.view_note()
+            if note_manager.notes:
+                try:
+                    delete_choice = int(input("Enter note number to delete: "))
+                    note_index = delete_choice - 1
+                    note_manager.delete_note(note_index)
+                except ValueError:
+                    print("Invalid input. Please enter a number or press Enter.")
         elif choice == '5':
+            search_term = input("Enter search word: ").strip()
             note_manager.search_note(search_term)
         elif choice == '6':
             note_manager.convert_to_csv()
