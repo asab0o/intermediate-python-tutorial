@@ -3,6 +3,9 @@ import json
 import uuid
 from colorama import Fore, Style
 
+MAX_MENU_NUMBER = 7
+MIN_CHA_NUMBER = 3
+
 class Note:
     def __init__(self, title, content, id=None, timestamp=None):
         self.id = id if id is not None else str(uuid.uuid4())
@@ -10,6 +13,9 @@ class Note:
         self.content = content
         self.timestamp = timestamp if timestamp is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
+    #def __str__(self):
+    #    return f"Title: {self.title}\nContent: {self.content}\nTimestamp: {self.timestamp}"
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -44,7 +50,6 @@ class NoteManager:
             self.notes = []
     
     def add_note(self, title, content):
-        MIN_CHA_NUMBER = 3
         if not title or not content:
             print(Fore.RED + "Error: Title and content cannot be empty.")
             print(Style.RESET_ALL)
@@ -76,6 +81,34 @@ class NoteManager:
         else:
             return self.notes[index]
         
+    def edit_note(self, index, new_title, new_content):
+        if index < 0 or len(self.notes) - 1 < index:
+            print(Fore.RED + f"No.{note_index} note does not exist.")
+            print(Style.RESET_ALL)
+            return False
+
+        if not new_title or not new_content:
+            print(Fore.RED + "Error: Title and content cannot be empty.")
+            print(Style.RESET_ALL)
+            return False
+
+        if len(new_title) <= MIN_CHA_NUMBER or len(new_content) <= MIN_CHA_NUMBER:
+            print(Fore.RED + f"Title and content must be at least {MIN_CHA_NUMBER} characters long.")
+            print(Style.RESET_ALL)
+            return False
+        # get old data
+        if self.notes[index]:
+            target_note = self.notes[index]
+            # target_note["title"]がダメな理由
+            target_note.title = new_title
+            target_note.content = new_content
+            target_note.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print("Note updated successfully!")
+            return True
+        else:
+            print("Does not exist.")
+            return False
+        
     def save_notes(self):
         try:
             with open(self.filename, "w") as f:
@@ -93,8 +126,6 @@ class InvalidCharacterNumber(Exception):
         super().__init__(message)
 
 
-
-MAX_MENU_NUMBER = 7
 def display_menu():
     print("\n--- Note-Taking Application Menu ---")
     print("1. Add Note")
@@ -144,7 +175,19 @@ def main():
                     except ValueError:
                         print("Invalid input. Please enter a number or press Enter.")
         elif choice == '3':
-            note_manager.edit_note(new_title, new_content)
+            note_manager.view_note()
+            # enter id
+            if note_manager.notes:
+                try:
+                    edit_choice = int(input("Enter note number to edit: "))
+                    if not edit_choice:
+                        break
+                    note_index = int(edit_choice) - 1
+                    new_title = input("Enter new title: ").strip()
+                    new_content = input("Enter new content: ").strip()
+                    note_manager.edit_note(note_index, new_title, new_content)
+                except ValueError:
+                    print("Invalid input. Please enter a number or press Enter.")
         elif choice == '4':
             note_manager.delete_note(note_number)
         elif choice == '5':
