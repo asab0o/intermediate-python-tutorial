@@ -1,14 +1,22 @@
 import datetime
 import json
-
+import uuid
+from colorama import Fore, Style
 
 class Note:
     def __init__(self, title, content, id=None, timestamp=None):
-        self.id = id if not None else str(uuid.uuid4())
+        self.id = id if id is not None else str(uuid.uuid4())
         self.title = title
         self.content = content
-        self.timestamp = timestamp if not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp = timestamp if timestamp is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "timestamp": self.timestamp
+        }
     # def test_fun(self):
     #     print(f"{self.title} and {self.content}")
 
@@ -28,9 +36,9 @@ class NoteManager:
         except FileNotFoundError:
             print("No saved notes file found. Starting with an empty list.")
             self.notes = []
-        except JSONDecodeError:
-            print("Error decoding notes file. Starting with an empty list.")
-            self.notes = []
+        except json.JSONDecodeError:
+             print("Error decoding notes file. Starting with an empty list.")
+             self.notes = []
         except Exception as e:
             print(f"An unexpected error occurred while loading notes: {e}")
             self.notes = []
@@ -38,11 +46,14 @@ class NoteManager:
     def add_note(self, title, content):
         MIN_CHA_NUMBER = 3
         if not title or not content:
-            print("Error: Title and content cannot be empty.")
+            print(Fore.RED + "Error: Title and content cannot be empty.")
+            print(Style.RESET_ALL)
             # False -> break?, True -> main menu
             return False
         if len(title) <= MIN_CHA_NUMBER or len(content) <= MIN_CHA_NUMBER:
-            raise InvalidCharacterNumber(f"Title and content must be at least {MIN_CHA_NUMBER} characters long.")
+            print(Fore.RED + f"Title and content must be at least {MIN_CHA_NUMBER} characters long.")
+            print(Style.RESET_ALL)
+            return False
         note = Note(title, content)
         self.notes.append(note)
         print("Note added successfully!")
@@ -145,6 +156,7 @@ def main():
             print("Exiting application. Goodbye!")
             break
 
+# Note: choice3-6 and 6.1 Exercises
 
 if __name__ == "__main__":
     main()
